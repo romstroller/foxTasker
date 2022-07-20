@@ -10,6 +10,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <!-- <RowDefinition Height="Auto" /> -->
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
@@ -21,15 +22,23 @@
                 x:Name="nodeQueue" 
                 ItemsSource="{Binding activeCollection}" 
                 AutoGenerateColumns="False"
-                AlternatingRowBackground="LightBlue" 
-                AlternationCount="2">
+                AlternatingRowBackground="LightBlue"
+                AlternationCount="2"
+                CanUserAddRows="false">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Type" Binding="{Binding Path=nodeType}" IsReadOnly="true"/>
-                    <DataGridTextColumn Header="Label" Binding="{Binding Path=nodeLabel}" />
+                    <DataGridTextColumn Header="Type" Binding="{Binding Path=type}"
+                        IsReadOnly="true" MinWidth="75"/>
+                    <DataGridTextColumn Header="Label" Binding="{Binding Path=label}"
+                        MinWidth="125"/>
                 </DataGrid.Columns>
             </DataGrid>
         </DockPanel>
-        <Button Grid.Row="1" Command="{Binding Path=addExampleItems_cmd}">AddExamples</Button>
+
+        <StackPanel Grid.Row="1">
+            <Button Command="{Binding Path=addExampleItems_cmd}">Add Examples</Button>
+            <Button Command="{Binding Path=addActionCmd}">New Action</Button>
+            <Button Command="{Binding Path=runQueue_mockCmd}">Run Queue</Button>
+        </StackPanel>
 
     </Grid>
 </Window>

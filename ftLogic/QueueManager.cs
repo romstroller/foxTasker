@@ -1,14 +1,14 @@
 using System.Windows.Input; // ICommand
 using System.Collections.ObjectModel; // Observable collection
 using static System.Console; // WriteLine
+using System.Reflection;
 
 namespace foxTasker
 {
     public class QueueManager
     {
-        public QueueManager(BaseNode? startupNode = null)
+        public QueueManager()
         {
-            activeNode = startupNode ?? new BaseNode();
             WriteLine("QueueManager instantiated");
         }
         private BaseNode _activeNode { get; set; } = new BaseNode();
@@ -30,21 +30,43 @@ namespace foxTasker
             foreach (BaseNode node in activeNode.members) activeCollection.Add(node);
         }
         private bool editCollection_allow { get; set; } = true;
+        private BaseNode nodeDraft { get; set; } = new BaseNode();
         private ICommand? _insertNodeCmd { get; set; } = null;
-        private BaseNode draftNode { get; set; } = new BaseNode();
         public ICommand insertNodeCmd
         {
             get
             {
                 return _insertNodeCmd ??
                 (_insertNodeCmd = new CommandHandler(
-                    () => insertNode(), () => editCollection_allow));
+                    () => insertNodeDraft(), () => editCollection_allow));
             }
         }
-        public void insertNode()
+        public void insertNodeDraft( int? index = null )
         {
-            activeNode.members.Insert(activeNode.members.Count, draftNode);
+            int _index = ( index == null ) ? activeNode.members.Count : index.Value;
+            activeNode.members.Insert(_index, nodeDraft);
             updateActiveCollection();
+        }
+        private ICommand? _addActionCmd { get; set; } = null;
+        public ICommand addActionCmd
+        {
+            get
+            {
+                return _addActionCmd ??
+                (_addActionCmd = new CommandHandler(
+                    () => addAction(), () => editCollection_allow));
+            }
+        }
+        public void addAction()
+        {
+            // new ActionManager( );
+            // new ActionEditor( ActionManager ); // needs for datacontext
+            // if ( show dlg == true )
+            // {
+                // nodeDraft = actMgr.draft;
+                // insertNodeDraft();
+            // }
+            
         }
         private ICommand? _addExampleItems_cmd { get; set; } = null;
         public ICommand addExampleItems_cmd
@@ -58,12 +80,37 @@ namespace foxTasker
         }
         public void addExampleItems()
         {
-            NodeCollection exampleNodes = new NodeCollection { new GoTo(), new Click() };
-            foreach (BaseNode node in exampleNodes)
+            NodeCollection exampleQueue = new NodeCollection 
             {
-                draftNode = node;
-                insertNode();
+                new GoTo( "http://www.wikipedia.org" ), 
+                new Click( )
+            };
+
+            foreach (BaseNode node in exampleQueue)
+            {
+                nodeDraft = node;
+                insertNodeDraft();
             }
         }
+        private ICommand? _runQueue_mockCmd { get; set; } = null;
+        public ICommand runQueue_mockCmd
+        {
+            get
+            {
+                return _runQueue_mockCmd ??
+                (_runQueue_mockCmd = new CommandHandler(
+                    () => runQueue_mock(), () => true));
+            }
+        }
+        public void runQueue_mock()
+        {
+            foreach (BaseNode node in activeCollection)
+            {
+                WriteLine( $"================================" );
+                WriteLine( $"NODE type: {node.type }\n" );
+                WriteLine( $"node.label: {node.label}" );
+            }
+        }
+
     }
 }

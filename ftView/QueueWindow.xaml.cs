@@ -25,6 +25,7 @@ namespace foxTasker
         {
             DataContext = queueManager;
             InitializeComponent();
+            
         }
     }
 }
