@@ -30,7 +30,6 @@ namespace foxTasker
             foreach (BaseNode node in activeNode.members) activeCollection.Add(node);
         }
         private bool editCollection_allow { get; set; } = true;
-        private BaseNode nodeDraft { get; set; } = new BaseNode();
         private ICommand? _insertNodeCmd { get; set; } = null;
         public ICommand insertNodeCmd
         {
@@ -38,13 +37,14 @@ namespace foxTasker
             {
                 return _insertNodeCmd ??
                 (_insertNodeCmd = new CommandHandler(
-                    () => insertNodeDraft(), () => editCollection_allow));
+                    () => insertNode(), () => editCollection_allow));
             }
         }
-        public void insertNodeDraft( int? index = null )
+        BaseNode targetNode { get; set; } = new BaseNode();
+        public void insertNode(BaseNode? node = null, int? _index = null)
         {
-            int _index = ( index == null ) ? activeNode.members.Count : index.Value;
-            activeNode.members.Insert(_index, nodeDraft);
+            int index = (_index == null) ? activeNode.members.Count : _index.Value;
+            activeNode.members.Insert(index, node ?? targetNode);
             updateActiveCollection();
         }
         private ICommand? _addActionCmd { get; set; } = null;
@@ -57,16 +57,16 @@ namespace foxTasker
                     () => addAction(), () => editCollection_allow));
             }
         }
+
+        private ActionManager? actionMgr { get; set; } = null;
+        private ActionWindow? actionWin { get; set; } = null;
         public void addAction()
         {
-            // new ActionManager( );
-            // new ActionEditor( ActionManager ); // needs for datacontext
-            // if ( show dlg == true )
-            // {
-                // nodeDraft = actMgr.draft;
-                // insertNodeDraft();
-            // }
-            
+            ActionNode nodeDraft = new ActionNode();
+            actionMgr = actionMgr ?? new ActionManager();
+            actionMgr.manage(nodeDraft);
+            actionWin = new ActionWindow(actionMgr); // pass as datacontext
+            if (actionWin.ShowDialog() == true) insertNode(nodeDraft);
         }
         private ICommand? _addExampleItems_cmd { get; set; } = null;
         public ICommand addExampleItems_cmd
@@ -80,16 +80,16 @@ namespace foxTasker
         }
         public void addExampleItems()
         {
-            NodeCollection exampleQueue = new NodeCollection 
+            NodeCollection exampleQueue = new NodeCollection
             {
-                new GoTo( "http://www.wikipedia.org" ), 
+                new GoTo( "http://www.wikipedia.org" ),
                 new Click( )
             };
 
             foreach (BaseNode node in exampleQueue)
             {
-                nodeDraft = node;
-                insertNodeDraft();
+                targetNode = node;
+                insertNode();
             }
         }
         private ICommand? _runQueue_mockCmd { get; set; } = null;
@@ -106,11 +106,25 @@ namespace foxTasker
         {
             foreach (BaseNode node in activeCollection)
             {
-                WriteLine( $"================================" );
-                WriteLine( $"NODE type: {node.type }\n" );
-                WriteLine( $"node.label: {node.label}" );
+                WriteLine($"================================");
+                WriteLine($"NODE type: {node.type}\n");
+                WriteLine($"node.label: {node.label}");
             }
         }
+
+        // public bool startDriverClick_enabled { get { return true; } }
+        // private ICommand? _startDriverClickHdler;
+        // public ICommand startDriverClick
+        // {
+        //     get
+        //     {
+        //         return _startDriverClickHdler ??
+        //         (_startDriverClickHdler = new CommandHandler(
+        //             () => startDriver(), () => startDriverClick_enabled));
+        //     }
+        // }
+        // private void startDriver() { agent = new DriverAgent(); }
+        // private DriverAgent? agent { get; set; }
 
     }
 }

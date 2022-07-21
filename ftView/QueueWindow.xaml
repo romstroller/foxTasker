@@ -26,10 +26,10 @@
                 AlternationCount="2"
                 CanUserAddRows="false">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Type" Binding="{Binding Path=type}"
-                        IsReadOnly="true" MinWidth="75"/>
-                    <DataGridTextColumn Header="Label" Binding="{Binding Path=label}"
-                        MinWidth="125"/>
+                    <DataGridTextColumn Binding="{Binding Path=type}"
+                        Header="Type" IsReadOnly="true" MinWidth="75"/>
+                    <DataGridTextColumn Binding="{Binding Path=label}"
+                        Header="Label" MinWidth="125"/>
                 </DataGrid.Columns>
             </DataGrid>
         </DockPanel>
