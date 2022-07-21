@@ -10,7 +10,8 @@ namespace foxTasker
     public class NodeCollection : Collection<BaseNode> { }
     public class BaseNode
     {
-        public virtual string label { get; set; } = "default label";
+        public string label { get; set; } = "default label";
+        public virtual string subtype { get; } = "base";
         public virtual string type { get; } = "base";
         private NodeCollection _members { get; set; }
             = new NodeCollection();

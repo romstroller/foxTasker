@@ -42,12 +42,14 @@
         <Label Grid.Row="3" Margin="0,20,0,0" Name="descriptInstruc" FontSize="16" 
             Content="Add a description to explain the Action in the Queue Dash" />
         <TextBox Grid.Row="4" Margin="4,4,4,0"  AcceptsReturn="True" TextWrapping="Wrap" 
-            Text="bind to _actionDraft label" />
+            Text="{Binding Path=actionLabel, Mode=TwoWay }" />
         <Label Grid.Row="5" Margin="0,20,0,0" Name="propertiesInstruc" FontSize="16" 
             Content="Provide action property values" />
 
         <DataGrid Grid.Row="6" Margin="4,4,4,0" 
-            x:Name="editProperties" ItemsSource="{Binding inputProperties}" AutoGenerateColumns="False">
+            x:Name="editProperties" ItemsSource="{Binding inputProperties, Mode=TwoWay }" 
+                AutoGenerateColumns="False"
+                CanUserAddRows="false">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Property" Binding="{Binding Path=name}" IsReadOnly="true"/>
                 <DataGridTextColumn Header="Value" Binding="{Binding Path=value}" />

@@ -54,19 +54,47 @@ namespace foxTasker
             {
                 return _addActionCmd ??
                 (_addActionCmd = new CommandHandler(
-                    () => addAction(), () => editCollection_allow));
+                    () => addNewAction(), () => editCollection_allow));
             }
         }
-
         private ActionManager? actionMgr { get; set; } = null;
         private ActionWindow? actionWin { get; set; } = null;
-        public void addAction()
+        public void addNewAction()
         {
-            ActionNode nodeDraft = new ActionNode();
             actionMgr = actionMgr ?? new ActionManager();
-            actionMgr.manage(nodeDraft);
             actionWin = new ActionWindow(actionMgr); // pass as datacontext
-            if (actionWin.ShowDialog() == true) insertNode(nodeDraft);
+            if (actionWin.ShowDialog() == true) insertNode(actionMgr.actionDraft);
+        }
+        int? selectIndex { get; set; } = null;
+        private BaseNode? _selectedNode { get; set; } = null;
+        public BaseNode? selectedNode
+        {
+            get { return _selectedNode; }
+            set { _selectedNode = value; WriteLine($"selectedNode set on {_selectedNode}"); }
+        }
+        private ICommand? _editSelected_cmd { get; set; } = null;
+        public ICommand editSelected_cmd
+        {
+            get
+            {
+                return _editSelected_cmd ??
+                (_editSelected_cmd = new CommandHandler(
+                    () => editSelected(), () => true));
+            }
+        }
+        public void editSelected()
+        {
+            if (selectedNode == null) return; // show "select one" dlg (reuse if mult.select)
+            ActionNode? selectedAction = selectedNode as ActionNode ?? null;
+            if (selectedAction == null) return; // convert to btn disabled ( bool etc )
+            actionMgr = actionMgr ?? new ActionManager();
+            // copy subtype+properties, copy object, or work directly on object (?)
+            actionMgr.fromSelected(selectedAction);
+            actionWin = new ActionWindow(actionMgr);
+            if (actionWin.ShowDialog() == true)
+            {
+                updateActiveCollection();
+            }
         }
         private ICommand? _addExampleItems_cmd { get; set; } = null;
         public ICommand addExampleItems_cmd

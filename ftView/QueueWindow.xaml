@@ -24,10 +24,13 @@
                 AutoGenerateColumns="False"
                 AlternatingRowBackground="LightBlue"
                 AlternationCount="2"
-                CanUserAddRows="false">
+                CanUserAddRows="false"
+                SelectedItem="{Binding Path=selectedNode, Mode=TwoWay}" >
                 <DataGrid.Columns>
                     <DataGridTextColumn Binding="{Binding Path=type}"
                         Header="Type" IsReadOnly="true" MinWidth="75"/>
+                    <DataGridTextColumn Binding="{Binding Path=subtype}"
+                        Header="SubType" IsReadOnly="true" MinWidth="60"/>
                     <DataGridTextColumn Binding="{Binding Path=label}"
                         Header="Label" MinWidth="125"/>
                 </DataGrid.Columns>
@@ -35,6 +38,7 @@
         </DockPanel>
 
         <StackPanel Grid.Row="1">
+            <Button Command="{Binding Path=editSelected_cmd}">Edit Selected</Button>
             <Button Command="{Binding Path=addExampleItems_cmd}">Add Examples</Button>
             <Button Command="{Binding Path=addActionCmd}">New Action</Button>
             <Button Command="{Binding Path=runQueue_mockCmd}">Run Queue</Button>

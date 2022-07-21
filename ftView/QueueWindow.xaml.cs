@@ -10,5 +10,6 @@ namespace foxTasker
             DataContext = queueManager;
             InitializeComponent();
         }
+        void Queue_Select() { } 
     }
 }

@@ -10,19 +10,30 @@ namespace foxTasker
 {
     public class ActionManager : INotifyPropertyChanged
     {
-        public ActionNode actionDraft { get; set; } = new ActionNode();
-        public void manage(ActionNode inputNode)
-        {
-            actionDraft = inputNode;
-        }
         public ActionManager()
         {
-            initializeTypeData();
+            initializeState();
             WriteLine("new action manager instantiated");
+        }
+        internal ActionNode actionDraft { get; set; } = new ActionNode();
+        public string actionLabel
+        {
+            get { return actionDraft.label; }
+            set
+            {
+                if (actionDraft.label == value) return;
+                actionDraft.label = value;
+                OnPropertyChanged(nameof(actionLabel));
+            }
+        }
+        public void fromSelected(ActionNode inputNode)
+        {
+            actionDraft = inputNode;
+            updateInputProperties();
         }
         Dictionary<string, Type> typeDict { get; } = new Dictionary<string, Type>();
         public List<string> actTypeList { get; } = new List<string>();
-        public void initializeTypeData()
+        public void initializeState()
         {
             // get name property from auto-instances of all ActionItem subclasses
             List<Type> actItemSubtypes = new List<Type>();
@@ -39,8 +50,8 @@ namespace foxTasker
                     ActionNode? newAction = myobject as ActionNode;
                     if (newAction != null)
                     {
-                        typeDict.Add(newAction.actType, type); // for obj drafter
-                        actTypeList.Add(newAction.actType); // for dropdown selector
+                        typeDict.Add(newAction.subtype, type); // for obj drafter
+                        actTypeList.Add(newAction.subtype); // for dropdown selector
                     }
                 }
             }
@@ -77,6 +88,11 @@ namespace foxTasker
                 OnPropertyChanged(nameof(draftActName));
             }
         }
+        internal void clearProperties()
+        {
+            foreach (NodeProperty prop in inputProperties.ToList())
+                inputProperties.Remove(prop);
+        }
         private void updateInputProperties()
         {
             WriteLine("Updating form property source");
@@ -84,9 +100,12 @@ namespace foxTasker
             if (inputProperties != null && actionDraft != null)
             {
                 // re-populate inputProperties, update label
-                foreach (NodeProperty prop in inputProperties.ToList()) inputProperties.Remove(prop);
-                foreach (NodeProperty prop in actionDraft.propertyArray) inputProperties.Add(prop);
-                draftActName = actionDraft.actType;
+                clearProperties();
+                foreach (NodeProperty prop in actionDraft.propertyArray)
+                    inputProperties.Add(prop);
+
+                draftActName = actionDraft.subtype;
+                actionLabel = actionDraft.label;
             }
         }
         public event PropertyChangedEventHandler? PropertyChanged;

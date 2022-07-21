@@ -1,4 +1,5 @@
 using System.Windows.Controls;
+using System.ComponentModel;
 using System.Windows;
 
 namespace foxTasker
@@ -11,6 +12,8 @@ namespace foxTasker
             InitializeComponent();
             _actionManager = actionManager;
             DataContext = _actionManager;
+
+            // this.Closing += new CancelEventHandler(ActionWindow_Closed);
         }
         private void actSelectChanged(object sender, SelectionChangedEventArgs obj)
         {
@@ -21,5 +24,9 @@ namespace foxTasker
         }
         private void saveButton_Click(object sender, RoutedEventArgs e) =>
             DialogResult = true;
+        // void ActionWindow_Closed(object? sender, CancelEventArgs e)
+        // {
+        //     _actionManager.clearProperties();
+        // }
     }
 }
